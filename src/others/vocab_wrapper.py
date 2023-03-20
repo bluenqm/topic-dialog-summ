@@ -17,7 +17,7 @@ class VocabWrapper(object):
         pass
 
     def _word2vec_init(self):
-        self.model = Word2Vec(size=self.emb_size, window=5, min_count=30, workers=4)
+        self.model = Word2Vec(vector_size=self.emb_size, window=5, min_count=30, workers=4)
 
     def _glove_train(self, ex):
         pass
@@ -35,9 +35,9 @@ class VocabWrapper(object):
     def _word2vec_report(self):
         if self.model is not None:
             print("Total examples: %d" % self.model.corpus_count)
-            print("Vocab Size: %d" % len(self.model.wv.vocab))
+            print("Vocab Size: %d" % len(self.model.wv))
         else:
-            print("Vocab Size: %d" % len(self.emb.vocab))
+            print("Vocab Size: %d" % len(self.emb))
 
     def _glove_save_model(self, path):
         pass
@@ -74,11 +74,11 @@ class VocabWrapper(object):
 
     def _w2i_word2vec(self, w):
         if self.emb is not None:
-            if w in self.emb.vocab.keys():
-                return self.emb.vocab[w].index
+            if w in self.emb.key_to_index.keys():
+                return self.emb.key_to_index[w]
         if self.model is not None:
-            if w in self.model.wv.vocab.keys():
-                return self.model.wv.vocab[w].index
+            if w in self.model.wv.key_to_index.keys():
+                return self.model.wv.key_to_index[w]
         return None
 
     def _i2w_glove(self, idx):
@@ -110,11 +110,11 @@ class VocabWrapper(object):
 
     def _w2e_word2vec(self, w):
         if self.emb is not None:
-            if w in self.emb.vocab.keys():
-                return self.emb[w]
+            if w in self.emb.key_to_index.keys():
+                return self.emb.key_to_index[w]
         if self.model is not None:
-            if w in self.model.wv.vocab.keys():
-                return self.model.wv[w]
+            if w in self.model.wv.key_to_index.keys():
+                return self.model.wv.key_to_index[w]
         return None
 
     def _voc_size_glove(self):
@@ -122,9 +122,9 @@ class VocabWrapper(object):
 
     def _voc_size_word2vec(self):
         if self.emb is not None:
-            return len(self.emb.vocab)
+            return len(self.emb)
         if self.model is not None:
-            return len(self.model.wv.vocab)
+            return len(self.model.wv)
         return -1
 
     def _get_emb_glove(self):

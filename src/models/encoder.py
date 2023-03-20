@@ -5,7 +5,7 @@ import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence as pack
 from torch.nn.utils.rnn import pad_packed_sequence as unpack
 
-from pytorch_transformers import BertModel
+from transformers import BertModel
 from models.neural import MultiHeadedAttention, PositionwiseFeedForward, rnn_factory
 
 
@@ -30,11 +30,11 @@ class Bert(nn.Module):
 
     def forward(self, x, segs, mask):
         if(self.finetune):
-            top_vec, _ = self.model(x, segs, attention_mask=mask)
+            top_vec, _ = self.model(x, token_type_ids=segs, attention_mask=mask)
         else:
             self.eval()
             with torch.no_grad():
-                top_vec, _ = self.model(x, segs, attention_mask=mask)
+                top_vec, _ = self.model(x, token_type_ids=segs, attention_mask=mask)
         return top_vec
 
 

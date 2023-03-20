@@ -13,7 +13,7 @@ import time
 import torch
 import distributed
 
-from pytorch_transformers import BertTokenizer
+from transformers import BertTokenizer
 from models import data_loader
 from models.data_loader import load_dataset
 from models.optimizers import build_optim, build_optim_bert, build_optim_other, build_optim_topic

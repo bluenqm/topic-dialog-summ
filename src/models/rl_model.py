@@ -255,7 +255,7 @@ class Model(nn.Module):
         # Get base summaries for reward computation.
         # sent encoding
         src_emb = self.embeddings(src)
-        sent_hid = self.sent_encoder(src_emb, 1-mask_src)[:, 0, :]
+        sent_hid = self.sent_encoder(src_emb, ~mask_src)[:, 0, :]
 
         # hierarchical encoding
         sent_list = torch.split(sent_hid, ex_segs)
@@ -282,7 +282,7 @@ class Model(nn.Module):
             top_vec = self.encoder(src_mapped, segs_mapped, mask_src_mapped)
         else:
             src_mapped_emb = self.embeddings(src_mapped)
-            top_vec = self.encoder(src_mapped_emb, 1-mask_src_mapped)
+            top_vec = self.encoder(src_mapped_emb, ~mask_src_mapped)
 
         if self.args.topic_model:
             topic_vec_ge = self._topic_vec_ge(topic_info, agent_mask, customer_mask, idx_mapped, hier)
@@ -290,7 +290,7 @@ class Model(nn.Module):
             topic_vec_ge = None
 
         summary_base = self._fast_translate_batch(batch, top_vec, self.max_length,
-                                                  memory_mask=1-mask_src_mapped,
+                                                  memory_mask=~mask_src_mapped,
                                                   min_length=2, beam_size=1,
                                                   topic_vec=topic_vec_ge)
         return summary_base
@@ -757,7 +757,7 @@ class Model(nn.Module):
 
         # sent encoding
         src_emb = self.embeddings(src)
-        sent_hid = self.sent_encoder(src_emb, 1-mask_src)[:, 0, :]
+        sent_hid = self.sent_encoder(src_emb, ~mask_src)[:, 0, :]
 
         # hierarchical encoding
         sent_list = torch.split(sent_hid, ex_segs)
@@ -815,7 +815,7 @@ class Model(nn.Module):
             top_vec = self.encoder(src_mapped, segs_mapped, mask_src_mapped)
         else:
             src_mapped_emb = self.embeddings(src_mapped)
-            top_vec = self.encoder(src_mapped_emb, 1-mask_src_mapped)
+            top_vec = self.encoder(src_mapped_emb, ~mask_src_mapped)
 
         if self.args.topic_model:
             topic_vec_ge = self._topic_vec_ge(topic_info, agent_mask, customer_mask, idx_mapped, hier)
@@ -825,12 +825,12 @@ class Model(nn.Module):
         if self.training:
             dec_state = self.decoder.init_decoder_state(src, top_vec)
             decode_output, _, _ = self.decoder(tgt[:, :-1], top_vec, dec_state,
-                                               memory_masks=1-mask_src_mapped,
+                                               memory_masks=~mask_src_mapped,
                                                topic_vec=topic_vec_ge)
             summary = None
         else:
             decode_output = None
-            summary = self._fast_translate_batch(batch, top_vec, self.max_length, memory_mask=1-mask_src_mapped,
+            summary = self._fast_translate_batch(batch, top_vec, self.max_length, memory_mask=~mask_src_mapped,
                                                  min_length=2, beam_size=self.beam_size,
                                                  topic_vec=topic_vec_ge)
         return pn_result, decode_output, topic_loss, summary
@@ -845,7 +845,7 @@ class Model(nn.Module):
         # ext module
         # sent encoding
         src_emb = self.embeddings(src)
-        sent_hid = self.sent_encoder(src_emb, 1-mask_src)[:, 0, :]
+        sent_hid = self.sent_encoder(src_emb, ~mask_src)[:, 0, :]
 
         # hierarchical encoding
         sent_list = torch.split(sent_hid, ex_segs)
@@ -884,7 +884,7 @@ class Model(nn.Module):
             top_vec = self.encoder(src_mapped, segs_mapped, mask_src_mapped)
         else:
             src_mapped_emb = self.embeddings(src_mapped)
-            top_vec = self.encoder(src_mapped_emb, 1-mask_src_mapped)
+            top_vec = self.encoder(src_mapped_emb, ~mask_src_mapped)
 
         if self.args.topic_model:
             topic_vec_ge = self._topic_vec_ge(topic_info, agent_mask, customer_mask, idx_mapped, hier)
@@ -894,12 +894,12 @@ class Model(nn.Module):
         if self.training:
             dec_state = self.decoder.init_decoder_state(src, top_vec)
             decode_output, _, _ = self.decoder(tgt[:, :-1], top_vec, dec_state,
-                                               memory_masks=1-mask_src_mapped,
+                                               memory_masks=~mask_src_mapped,
                                                topic_vec=topic_vec_ge)
             with torch.no_grad():
 
                 summary = self._fast_translate_batch(batch, top_vec, self.max_length,
-                                                     memory_mask=1-mask_src_mapped,
+                                                     memory_mask=~mask_src_mapped,
                                                      min_length=2, beam_size=1,
                                                      topic_vec=topic_vec_ge)
                 # Get base summaries for reward computation.
@@ -909,7 +909,7 @@ class Model(nn.Module):
 
         else:
             summary = self._fast_translate_batch(batch, top_vec, self.max_length,
-                                                 memory_mask=1-mask_src_mapped,
+                                                 memory_mask=~mask_src_mapped,
                                                  min_length=2, beam_size=self.args.beam_size,
                                                  topic_vec=topic_vec_ge)
             rl_loss, decode_output = None, None

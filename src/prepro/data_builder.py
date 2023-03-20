@@ -10,8 +10,10 @@ from os.path import join as pjoin
 
 from collections import Counter
 from rouge import Rouge
+from tqdm import tqdm
 from others.logging import logger
-from others.tokenization import BertTokenizer
+# from others.tokenization import BertTokenizer
+from transformers import BertTokenizer
 from others.vocab_wrapper import VocabWrapper
 
 
@@ -256,7 +258,7 @@ def _format_to_bert(params):
 
     count = 0
 
-    for dialogue in jobs:
+    for dialogue in tqdm(jobs):
         dialogue_b_data = []
         dialogue_token_num = 0
         for index, sent in enumerate(dialogue['session']):
@@ -315,9 +317,9 @@ def _format_to_bert(params):
             dialogue_turns += len(dialogue['session'])
             processed_turns += len(dialogue_b_data)
 
-            count += 1
-            if count % 50 == 0:
-                print(count)
+            # count += 1
+            # if count % 50 == 0:
+            #     print(count)
 
     statistic = {
         "instances": len(datasets),

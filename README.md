@@ -7,18 +7,18 @@ The code is partially referred to https://github.com/nlpyang/PreSumm.
 ## Requirements
 
 * Python 3.6 or higher
-* torch==1.1.0
-* pytorch-transformers==1.1.0
-* torchtext==0.4.0
-* rouge==0.3.2
-* tensorboardX==2.1
-* nltk==3.5
-* gensim==3.8.3
+* gensim
+* torch
+* transformers==2.11.0
+* torchtext
+* rouge
+* tensorboardX
+* nltk
 
 ## Environment
 
-* Tesla V100 16GB GPU
-* CUDA 10.2
+* RTX 3090 24GB GPU (Training requires 18.7GB GPU memory)
+* CUDA 11.7
 
 ## Data Format
 
@@ -53,8 +53,8 @@ Each json file is a data list that includes dialogue samples. The format of a di
 
 	The pretrained BERT checkpoints can be found at:
 	
-	* Chinese BERT: https://github.com/ymcui/Chinese-BERT-wwm
-	* English BERT: https://github.com/google-research/bert
+	* Chinese BERT: https://huggingface.co/ckiplab/bert-base-chinese/tree/main
+	* English BERT: https://huggingface.co/bert-base-uncased
 
 	Put BERT checkpoints into the directory **bert** like this:
 
@@ -73,13 +73,13 @@ Each json file is a data list that includes dialogue samples. The format of a di
 2. Pre-train word2vec embeddings
 
     ```
-    PYTHONPATH=. python ./src/train_emb.py -data_path json_data -emb_size 100 -emb_path pretrain_emb/word2vec
+    python ./src/train_emb.py -data_path json_data -emb_size 100 -emb_path pretrain_emb/word2vec
     ```
 
-3. Data Processing
+3. Data Processing (super slow, need 32GB RAM for the Chinese dataset)
 
 	```
-	PYTHONPATH=. python ./src/preprocess.py -raw_path json_data -save_path bert_data -bert_dir bert/chinese_bert -log_file logs/preprocess.log -emb_path pretrain_emb/word2vec -tokenize -truncated -add_ex_label
+	python ./src/preprocess.py -raw_path json_data -save_path bert_data -bert_dir bert/chinese_bert -log_file logs/preprocess.log -emb_path pretrain_emb/word2vec -tokenize -truncated -add_ex_label
 	```
 
 4. Pre-train the pipeline model (Ext + Abs)

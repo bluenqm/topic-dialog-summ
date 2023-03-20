@@ -31,8 +31,8 @@ class Batch(object):
                 src = torch.tensor(self._pad([x[0] for x in data], 0))
                 segs = torch.tensor(self._pad([x[1] for x in data], 0))
             tgt = torch.tensor(self._pad([x[5] for x in data], 0))
-            mask_src = 1 - (src == 0)
-            mask_tgt = 1 - (tgt == 0)
+            mask_src = ~(src == 0)
+            mask_tgt = ~(tgt == 0)
 
             setattr(self, 'src', src.to(device))
             setattr(self, 'tgt', tgt.to(device))
